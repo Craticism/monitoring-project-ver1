@@ -14,23 +14,20 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Topbar Khusus Mobile (Hanya muncul di HP) */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-30">
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-amber-500">
-            <HardHat className="w-5 h-5" />
-          </div>
-          <span className="font-bold text-sm">CONS-MONITORING</span>
-        </div>
-        <button 
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2 text-slate-300 hover:text-white bg-slate-800 rounded-lg border border-slate-700 focus:outline-none"
-        >
-          {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-      </div>
+      {/* Tombol Toggle (Hamburger / Close) Melayang di Kanan Atas (Khusus Mobile) */}
+      <button 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="md:hidden fixed top-4 right-4 z-50 p-2.5 bg-slate-900/90 text-slate-300 hover:text-white rounded-xl border border-slate-700/80 shadow-xl backdrop-blur-md focus:outline-none transition-all"
+        aria-label="Toggle Navigation"
+      >
+        {isSidebarOpen ? (
+          <X className="w-5 h-5 text-amber-500" />
+        ) : (
+          <Menu className="w-5 h-5" />
+        )}
+      </button>
 
-      {/* Backdrop / Overlay Hitam saat Sidebar Terbuka di HP */}
+      {/* Backdrop Hitam saat Sidebar Terbuka di HP */}
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)}
@@ -38,9 +35,9 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Sidebar Drawer (Responsif HP & Desktop) */}
+      {/* Sidebar Drawer */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-50 w-64 bg-slate-800 border-r border-slate-700/60 text-slate-300 p-4 flex flex-col justify-between transition-transform duration-200 ease-in-out
+        fixed md:static inset-y-0 left-0 z-40 w-64 bg-slate-800 border-r border-slate-700/60 text-slate-300 p-4 flex flex-col justify-between transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="space-y-6">
@@ -55,7 +52,7 @@ export default function Sidebar() {
             </div>
           </div>
 
-          {/* Navigation Links */}
+          {/* Navigasi Menu */}
           <nav className="space-y-1.5">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -64,7 +61,7 @@ export default function Sidebar() {
                 <Link
                   key={item.path}
                   to={item.path}
-                  onClick={() => setIsSidebarOpen(false)} // Otomatis menutup menu di HP saat di-klik
+                  onClick={() => setIsSidebarOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                     isActive
                       ? 'bg-amber-500 text-slate-950 font-semibold shadow-md'
@@ -79,7 +76,7 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        {/* Tombol Keluar */}
+        {/* Keluar Akun */}
         <Link
           to="/login"
           onClick={() => setIsSidebarOpen(false)}
