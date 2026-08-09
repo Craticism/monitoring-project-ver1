@@ -10,6 +10,44 @@ export default function Sidebar() {
     { path: '/laporan', label: 'Input Laporan', icon: FileSpreadsheet },
   ];
 
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+return (
+  <div className="min-h-screen bg-slate-950 flex flex-col md:flex-row">
+    {/* Topbar Khusus Mobile (Muncul hanya di HP) */}
+    <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 border-b border-slate-800">
+      <h1 className="font-bold text-white text-sm">Monitoring Proyek</h1>
+      <button 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className="p-2 text-slate-300 hover:text-white bg-slate-800 rounded-lg"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+    </div>
+
+    {/* Sidebar Drawer */}
+    <aside className={`
+      fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0
+      ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}>
+      {/* Isi Menu Sidebar */}
+    </aside>
+
+    {/* Backdrop / Overlay Hitam saat Sidebar Buka di HP */}
+    {isSidebarOpen && (
+      <div 
+        onClick={() => setIsSidebarOpen(false)}
+        className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
+      />
+    )}
+
+    {/* Main Content Area */}
+    <main className="flex-1 p-3 sm:p-6 md:p-8 overflow-y-auto">
+      {/* Route / Page Content */}
+    </main>
+  </div>
+);
+
   return (
     <div className="flex flex-col w-64 h-screen bg-slate-800 border-r border-slate-700/60 text-slate-300 p-4 justify-between">
       <div className="space-y-6">
