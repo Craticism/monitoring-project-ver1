@@ -1,31 +1,63 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
-// Layout
+// Import Layout Wrapper
 import MainLayout from './components/Layout/MainLayout';
 
-// Pages
+// Import Pages
 import Login from './pages/Auth/Login';
+import PackageSelector from './pages/Auth/PackageSelector';
 import DashboardUtama from './pages/Dashboard/DashboardUtama';
 import ProjectList from './pages/Projects/ProjectList';
-import InputLaporan from './pages/Laporan/InputLaporan';
+import FormInputProyek from './pages/Projects/FormInputProyek';
 
-function App() {
+// Import Detail Proyek
+import ProjectData from './pages/Projects/ProjectDetail/ProjectData';
+import ProjectRAB from './pages/Projects/ProjectDetail/ProjectRAB';
+import KurvaS from './pages/Projects/ProjectDetail/KurvaS';
+import PetaGIS from './pages/Projects/ProjectDetail/PetaGIS';
+
+import CompanyProfile from './pages/CompanyProfile/CompanyProfile';
+
+// Import Modul Laporan
+import LaporanList from './pages/Laporan/LaporanList';
+import InputLaporan from './pages/Laporan/FormInputLaporan';
+import LaporanData from './pages/Laporan/LaporanData'; // <-- Tambahkan ini
+
+export default function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Rute Standalone tanpa Sidebar */}
-        <Route path="/login" element={<Login />} />
+    <Routes>
+      {/* Route Publik / Auth */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/select-package" element={<PackageSelector />} />
 
-        {/* Rute Utama dengan Sidebar (MainLayout) */}
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<DashboardUtama />} />
-          <Route path="/projects" element={<ProjectList />} />
-          <Route path="/laporan" element={<InputLaporan />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </Router>
+      {/* Route Proteksi / Utama */}
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<DashboardUtama />} />
+        
+        {/* Modul Proyek & Detail */}
+        <Route path="/projects" element={<ProjectList />} />
+        <Route path="/projects/tambah" element={<FormInputProyek />} />
+        
+        {/* Route Detail Proyek */}
+        <Route path="/projects/projectdata" element={<ProjectData />} />
+        <Route path="/projects/:id/data" element={<ProjectData />} />
+        <Route path="/projects/:id/rab" element={<ProjectRAB />} />
+        <Route path="/projects/:id/kurva-s" element={<KurvaS />} />
+        <Route path="/projects/:id/peta-gis" element={<PetaGIS />} />
+
+        {/* Modul Lainnya */}
+        <Route path="/company-profile" element={<CompanyProfile />} />
+        
+        {/* Modul Laporan */}
+        <Route path="/laporan" element={<LaporanList />} />
+        <Route path="/laporan/input" element={<InputLaporan />} />
+        <Route path="/laporan/detail" element={<LaporanData />} /> {/* <-- Route Detail Laporan */}
+        <Route path="/laporan/:id/detail" element={<LaporanData />} /> {/* <-- Route jika menggunakan ID */}
+      </Route>
+
+      {/* Catch-All / 404 Redirect */}
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+    </Routes>
   );
 }
-
-export default App;

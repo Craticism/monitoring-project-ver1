@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { 
   FileSpreadsheet, 
   UploadCloud, 
@@ -14,36 +15,119 @@ import {
   Download
 } from 'lucide-react';
 
-export default function InputLaporan() {
-  const [inputMode, setInputMode] = useState('manual'); // 'manual' | 'template'
-  const [selectedProject, setSelectedProject] = useState('1');
+export default function InputLaporan({ selectedProject: initialProject }) {
+  const { id } = useParams();
+  const location = useLocation();
+
+  // Daftar Proyek Master (Sesuai dengan database / daftar proyek aplikasi)
+  const projectsList = [
+    {
+      id: '1',
+      namaProyek: 'Pembangunan Jembatan Sei Tabalong',
+      kodeKontrak: '600/012/PUPR-TAB/2026',
+      items: [
+        { id: 'item-a', name: 'Item A - Pekerjaan Persiapan & Mobilisasi', satuan: 'Ls' },
+        { id: 'item-b', name: 'Item B - Pekerjaan Tanah & Pondasi', satuan: 'm3' },
+        { id: 'item-c', name: 'Item C - Pekerjaan Struktur Beton', satuan: 'm3' },
+        { id: 'item-d', name: 'Item D - Pekerjaan Finishing & Electrical', satuan: 'ls' },
+      ]
+    },
+    {
+      id: '2',
+      namaProyek: 'Rehabilitasi Jalan Raya Utama Stasiun',
+      kodeKontrak: '600/088/PUPR-TAB/2026',
+      items: [
+        { id: 'item-a', name: 'Item A - Galian Lapisan Pondasi', satuan: 'm3' },
+        { id: 'item-b', name: 'Item B - Pengamparan Aspal Hotmix AC-WC', satuan: 'Ton' },
+        { id: 'item-c', name: 'Item C - Pembuatan Marka Jalan Termoplastik', satuan: 'm' },
+      ]
+    },
+    {
+      id: '3',
+      namaProyek: 'Pembangunan Gedung Kantor Dinas',
+      kodeKontrak: '600/104/PUPR-TAB/2026',
+      items: [
+        { id: 'item-a', name: 'Item A - Pekerjaan Struktur Pondasi Bore Pile', satuan: 'm' },
+        { id: 'item-b', name: 'Item B - Pasangan Dinding Bata & Plesteran', satuan: 'm2' },
+        { id: 'item-c', name: 'Item C - Instalasi Listrik & Sanitasi', satuan: 'titik' },
+      ]
+    }
+  ];
+
+  // Penentuan ID Proyek Aktif dari Props, Router Params, atau Location State
+  const activeProjectId = String(
+    initialProject?.id || id || location.state?.id || '1'
+  );
+
+  const [inputMode, setInputMode] = useState('manual');
+  const [selectedProjectId, setSelectedProjectId] = useState(activeProjectId);
   const [tanggal, setTanggal] = useState(new Date().toISOString().split('T')[0]);
   const [waktu, setWaktu] = useState('08:00 - 17:00 WITA');
   const [lokasiDetail, setLokasiDetail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
 
-  // Dynamic Progress Items State (Volume & Item Pekerjaan)
-  const [progressItems, setProgressItems] = useState([
-    { id: Date.now(), item: 'Item B - Pekerjaan Tanah & Pondasi', volume: '', satuan: 'm3', catatan: '' }
-  ]);
+  // Ambil detail data proyek yang dipilih
+  const currentProject = projectsList.find(p => p.id === selectedProjectId) || projectsList[0];
+
+  // Inisialisasi/Reset Items Progress saat Proyek Berubah
+  const [progressItems, setProgressItems] = useState([]);
+
+  useEffect(() => {
+    if (currentProject && currentProject.items.length > 0) {
+      const defaultItem = currentProject.items[0];
+      setProgressItems([
+        {
+          id: Date.now(),
+          item: defaultItem.name,
+          satuan: defaultItem.satuan,
+          volume: '',
+          catatan: ''
+        }
+      ]);
+    }
+  }, [selectedProjectId]);
 
   // Upload Files State
   const [fotoLapangan, setFotoLapangan] = useState([]);
   const [fileDokumen, setFileDokumen] = useState(null);
 
-  // Add Row Progress Item
+  // Handle Perubahan Pilihan Proyek
+  const handleProjectChange = (e) => {
+    setSelectedProjectId(e.target.value);
+  };
+
+  // Add Row Progress Item (Mengambil item default dari proyek yang dipilih)
   const handleAddItem = () => {
+    const nextItem = currentProject.items[progressItems.length % currentProject.items.length] || currentProject.items[0];
     setProgressItems([
       ...progressItems,
-      { id: Date.now(), item: 'Item C - Pekerjaan Struktur Beton', volume: '', satuan: 'm3', catatan: '' }
+      {
+        id: Date.now(),
+        item: nextItem.name,
+        satuan: nextItem.satuan,
+        volume: '',
+        catatan: ''
+      }
     ]);
   };
 
+  // Handle Perubahan Dropdown Item Pekerjaan (Otomatis update satuan)
+  const handleItemSelectChange = (index, selectedItemName) => {
+    const updated = [...progressItems];
+    const foundItem = currentProject.items.find(i => i.name === selectedItemName);
+    
+    updated[index].item = selectedItemName;
+    if (foundItem) {
+      updated[index].satuan = foundItem.satuan;
+    }
+    setProgressItems(updated);
+  };
+
   // Remove Row Progress Item
-  const handleRemoveItem = (id) => {
+  const handleRemoveItem = (itemId) => {
     if (progressItems.length > 1) {
-      setProgressItems(progressItems.filter(item => item.id !== id));
+      setProgressItems(progressItems.filter(item => item.id !== itemId));
     }
   };
 
@@ -57,6 +141,19 @@ export default function InputLaporan() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitting(true);
+
+    const payload = {
+      projectId: selectedProjectId,
+      projectName: currentProject.namaProyek,
+      tanggal,
+      waktu,
+      lokasiDetail,
+      progressItems,
+      fotoCount: fotoLapangan.length,
+      hasAttachment: !!fileDokumen
+    };
+
+    console.log('Mengirim laporan harian ke backend:', payload);
 
     // Simulasi POST data ke Backend Laravel
     setTimeout(() => {
@@ -72,10 +169,12 @@ export default function InputLaporan() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-wide">Input Laporan Lapangan</h1>
-          <p className="text-xs text-slate-400">Entri data harian volume progress, foto lapangan, dan berkas pendukung</p>
+          <p className="text-xs text-slate-400">
+            Entri data harian volume progress untuk <span className="text-amber-400 font-semibold">{currentProject.namaProyek}</span>
+          </p>
         </div>
 
-        {/* Switch Mode Input (Manual / Upload Template) */}
+        {/* Switch Mode Input */}
         <div className="grid grid-cols-2 p-1 bg-slate-800 border border-slate-700/60 rounded-xl text-xs font-semibold">
           <button
             type="button"
@@ -106,7 +205,7 @@ export default function InputLaporan() {
       {submittedSuccess && (
         <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center gap-3 text-emerald-400 text-xs animate-fade-in">
           <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
-          <span>Laporan harian berhasil disimpan ke sistem dan siap diakumulasi ke Kurva S.</span>
+          <span>Laporan harian untuk <b>{currentProject.namaProyek}</b> berhasil disimpan ke sistem!</span>
         </div>
       )}
 
@@ -123,13 +222,15 @@ export default function InputLaporan() {
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-slate-300">Pilih Proyek</label>
                 <select
-                  value={selectedProject}
-                  onChange={(e) => setSelectedProject(e.target.value)}
+                  value={selectedProjectId}
+                  onChange={handleProjectChange}
                   className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                 >
-                  <option value="1">Pembangunan Jembatan Sei Tabalong</option>
-                  <option value="2">Rehabilitasi Jalan Raya Utama Stasiun</option>
-                  <option value="3">Pembangunan Gedung Kantor Dinas</option>
+                  {projectsList.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.namaProyek}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -176,7 +277,7 @@ export default function InputLaporan() {
             </div>
           </div>
 
-          {/* Section 2: Input Item Progress & Volume */}
+          {/* Section 2: Input Item Progress & Volume (Dinamis sesuai proyek) */}
           <div className="bg-slate-800/60 border border-slate-700/60 p-6 rounded-2xl space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
@@ -198,17 +299,14 @@ export default function InputLaporan() {
                     <label className="text-[10px] text-slate-400">Item Pekerjaan #{index + 1}</label>
                     <select
                       value={row.item}
-                      onChange={(e) => {
-                        const updated = [...progressItems];
-                        updated[index].item = e.target.value;
-                        setProgressItems(updated);
-                      }}
+                      onChange={(e) => handleItemSelectChange(index, e.target.value)}
                       className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
                     >
-                      <option value="Item A - Pekerjaan Persiapan & Mobilisasi">Item A - Pekerjaan Persiapan & Mobilisasi</option>
-                      <option value="Item B - Pekerjaan Tanah & Pondasi">Item B - Pekerjaan Tanah & Pondasi</option>
-                      <option value="Item C - Pekerjaan Struktur Beton">Item C - Pekerjaan Struktur Beton</option>
-                      <option value="Item D - Pekerjaan Finishing & Electrical">Item D - Pekerjaan Finishing & Electrical</option>
+                      {currentProject.items.map((pi) => (
+                        <option key={pi.id} value={pi.name}>
+                          {pi.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -226,7 +324,7 @@ export default function InputLaporan() {
                         }}
                         className="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
                       />
-                      <span className="bg-slate-700 border border-slate-600 px-2.5 py-1.5 rounded-lg text-xs text-slate-300 flex items-center">
+                      <span className="bg-slate-700 border border-slate-600 px-2.5 py-1.5 rounded-lg text-xs text-slate-300 flex items-center shrink-0">
                         {row.satuan}
                       </span>
                     </div>
@@ -264,7 +362,6 @@ export default function InputLaporan() {
 
           {/* Section 3: Upload Dokumentasi Lapangan & Berkas PDF/Spreadsheet */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Foto Lapangan */}
             <div className="bg-slate-800/60 border border-slate-700/60 p-6 rounded-2xl space-y-4">
               <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
                 <ImageIcon className="w-4 h-4" /> Upload Foto Lapangan
@@ -297,7 +394,6 @@ export default function InputLaporan() {
               )}
             </div>
 
-            {/* Berkas PDF / Spreadsheet Pendukung */}
             <div className="bg-slate-800/60 border border-slate-700/60 p-6 rounded-2xl space-y-4">
               <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
                 <FileSpreadsheet className="w-4 h-4" /> Berkas Lampiran (PDF / Excel)
@@ -353,7 +449,7 @@ export default function InputLaporan() {
           <div className="space-y-2">
             <h2 className="text-lg font-bold text-white">Import Laporan via Template Excel</h2>
             <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
-              Gunakan format spreadsheet standar untuk mengunggah volume progress banyak proyek sekaligus.
+              Unggah file template untuk proyek <span className="text-amber-400 font-semibold">{currentProject.namaProyek}</span>.
             </p>
           </div>
 

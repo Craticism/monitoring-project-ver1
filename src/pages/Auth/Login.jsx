@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, Eye, EyeOff, HardHat, ShieldCheck, UserCheck } from 'lucide-react';
 
-export default function Login() {
+export default function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('admin'); // Memisahkan hak akses sesuai Mind Map (Admin / Tamu)
+  const [role, setRole] = useState('admin');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -14,10 +14,13 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     
-    // Simulasi authentikasi sebelum dikoneksikan ke Laravel Sanctum
+    // Simulasi authentikasi
     setTimeout(() => {
       setLoading(false);
-      navigate('/');
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+      navigate('/select-package'); // Mengarahkan ke halaman pilihan paket
     }, 800);
   };
 
@@ -142,7 +145,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+              className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/10 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 text-sm cursor-pointer"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
