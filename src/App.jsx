@@ -5,10 +5,10 @@ import MainLayout from './components/Layout/MainLayout';
 
 // Import Pages
 import Login from './pages/Auth/Login';
-import PackageSelector from './pages/Auth/PackageSelector';
+// HAPUS: import PackageSelector from './pages/Auth/PackageSelector';
 import DashboardUtama from './pages/Dashboard/DashboardUtama';
 import ProjectList from './pages/Projects/ProjectList';
-import FormInputProyek from './pages/Projects/FormInputProyek';
+import AddProject from './pages/Projects/AddProject';
 
 // Import Detail Proyek
 import ProjectData from './pages/Projects/ProjectDetail/ProjectData';
@@ -21,14 +21,14 @@ import CompanyProfile from './pages/CompanyProfile/CompanyProfile';
 // Import Modul Laporan
 import LaporanList from './pages/Laporan/LaporanList';
 import InputLaporan from './pages/Laporan/FormInputLaporan';
-import LaporanData from './pages/Laporan/LaporanData'; // <-- Tambahkan ini
+import LaporanData from './pages/Laporan/LaporanData'; 
 
 export default function App() {
   return (
     <Routes>
       {/* Route Publik / Auth */}
       <Route path="/login" element={<Login />} />
-      <Route path="/select-package" element={<PackageSelector />} />
+      {/* HAPUS: <Route path="/select-package" element={<PackageSelector />} /> */}
 
       {/* Route Proteksi / Utama */}
       <Route element={<MainLayout />}>
@@ -37,7 +37,7 @@ export default function App() {
         
         {/* Modul Proyek & Detail */}
         <Route path="/projects" element={<ProjectList />} />
-        <Route path="/projects/tambah" element={<FormInputProyek />} />
+        <Route path="/projects/tambah" element={<AddProject />} />
         
         {/* Route Detail Proyek */}
         <Route path="/projects/projectdata" element={<ProjectData />} />
@@ -52,8 +52,8 @@ export default function App() {
         {/* Modul Laporan */}
         <Route path="/laporan" element={<LaporanList />} />
         <Route path="/laporan/input" element={<InputLaporan />} />
-        <Route path="/laporan/detail" element={<LaporanData />} /> {/* <-- Route Detail Laporan */}
-        <Route path="/laporan/:id/detail" element={<LaporanData />} /> {/* <-- Route jika menggunakan ID */}
+        <Route path="/laporan/detail" element={<LaporanData />} /> 
+        <Route path="/laporan/:id/detail" element={<LaporanData />} /> 
       </Route>
 
       {/* Catch-All / 404 Redirect */}

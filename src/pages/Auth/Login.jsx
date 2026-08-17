@@ -20,7 +20,7 @@ export default function Login({ onLoginSuccess }) {
       if (onLoginSuccess) {
         onLoginSuccess();
       }
-      navigate('/select-package'); // Mengarahkan ke halaman pilihan paket
+      navigate('/dashboard'); // Mengarahkan ke halaman pilihan paket
     }, 800);
   };
 
