@@ -20,8 +20,9 @@ import CompanyProfile from './pages/CompanyProfile/CompanyProfile';
 
 // Import Modul Laporan
 import LaporanList from './pages/Laporan/LaporanList';
-import InputLaporan from './pages/Laporan/FormInputLaporan';
+import AddLaporan from './pages/Laporan/AddLaporan';
 import LaporanData from './pages/Laporan/LaporanData'; 
+import AccountList from './pages/Accounts/AccountList';
 
 export default function App() {
   return (
@@ -51,9 +52,10 @@ export default function App() {
         
         {/* Modul Laporan */}
         <Route path="/laporan" element={<LaporanList />} />
-        <Route path="/laporan/input" element={<InputLaporan />} />
+        <Route path="/laporan/input" element={<AddLaporan />} />
         <Route path="/laporan/detail" element={<LaporanData />} /> 
         <Route path="/laporan/:id/detail" element={<LaporanData />} /> 
+        <Route path="/accounts" element={<AccountList />} />
       </Route>
 
       {/* Catch-All / 404 Redirect */}

@@ -1,27 +1,10 @@
+import React, { useState } from 'react';
 import { useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { 
-  Building2, 
-  ArrowLeft, 
-  Calendar, 
-  MapPin, 
-  DollarSign, 
-  HardHat, 
-  UserCheck, 
-  Compass, 
-  FileText,
-  TrendingUp,
-  FileSpreadsheet,
-  Info,
-  Clock,
-  Download,
-  Users,
-  CheckCircle2,
-  FileSignature,
-  Activity,
-  ShieldCheck,
-  Edit3,
-  Trash2,
-  UploadCloud
+  Building2, ArrowLeft, Calendar, MapPin, DollarSign, HardHat, 
+  UserCheck, Compass, FileText, TrendingUp, FileSpreadsheet, Info, 
+  Clock, Download, Users, CheckCircle2, FileSignature, Activity, 
+  ShieldCheck, Edit3, Trash2, UploadCloud, Plus
 } from 'lucide-react';
 
 // Master Data Dummy Proyek Lengkap
@@ -109,6 +92,9 @@ export default function ProjectData() {
   const location = useLocation();
   const { id } = useParams();
 
+  // STATE: Toggle untuk mengaktifkan Edit Mode
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const selectedId = id || (location.state && location.state.id) || 1;
   const masterData = dummyProjectsMaster[selectedId] || dummyProjectsMaster[1];
   const project = { ...masterData, ...(location.state || {}) };
@@ -122,17 +108,17 @@ export default function ProjectData() {
   return (
     <div className="w-full space-y-5">
       
-      {/* Top Bar Navigation (Kini Full Width & Sebaris) */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 shrink-0">
+      {/* Top Bar Navigation (Full Width & Sebaris) */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 shrink-0 mb-2">
         
         {/* Kiri: Tombol Back & Judul */}
         <div className="flex items-center gap-3 shrink-0">
           <Link
             to="/projects"
-            className="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-300 hover:text-white rounded-lg transition-all"
+            className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer"
             title="Kembali ke Daftar Proyek"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
             <h1 className="text-lg font-bold text-white leading-tight flex items-center gap-1.5">
@@ -143,12 +129,15 @@ export default function ProjectData() {
         </div>
 
         {/* Kanan: Action Buttons & Navigasi Modul */}
-        <div className="flex flex-col sm:flex-row items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full xl:w-auto overflow-x-auto pb-1 sm:pb-0">
           
-          {/* Action Buttons */}
+          {/* Action Buttons (Dengan Fitur Toggle Edit Mode) */}
           <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 shrink-0">
-            <button className="px-2.5 py-1.5 bg-transparent hover:bg-blue-500/10 text-slate-300 hover:text-blue-400 text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap">
-              <Edit3 className="w-3.5 h-3.5" /> Edit Data
+            <button 
+              onClick={() => setIsEditMode(!isEditMode)}
+              className={`px-2.5 py-1.5 ${isEditMode ? 'bg-blue-500/20 text-blue-400' : 'bg-transparent hover:bg-blue-500/10 text-slate-300 hover:text-blue-400'} text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap`}
+            >
+              <Edit3 className="w-3.5 h-3.5" /> {isEditMode ? 'Selesai Edit' : 'Edit Mode'}
             </button>
             <button className="px-2.5 py-1.5 bg-transparent hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap">
               <Trash2 className="w-3.5 h-3.5" /> Hapus
@@ -199,7 +188,15 @@ export default function ProjectData() {
       <div className="space-y-4">
         
         {/* Section 1: Progress Snapshot */}
-        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl flex flex-col md:flex-row gap-6 items-center justify-between">
+        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl flex flex-col md:flex-row gap-6 items-center justify-between relative">
+          
+          {/* Tombol Edit Header Info (muncul di Edit Mode) */}
+          {isEditMode && (
+            <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+              <Edit3 className="w-4 h-4" />
+            </button>
+          )}
+
           <div className="w-full md:w-1/3">
             <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-1">
               <Activity className="w-4 h-4 text-amber-500" /> Indikator Progress Fisik
@@ -226,91 +223,112 @@ export default function ProjectData() {
         </div>
 
         {/* Section 2: Data Kontrak & Administrasi */}
-        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
-            <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
-              <FileSignature className="w-4 h-4" /> Data Kontrak & Keuangan
-            </h2>
-            <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${
-              project.status === 'Delayed' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
-              'bg-amber-500/10 text-amber-400 border-amber-500/20'
-            }`}>
-              Status: {project.status}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Nama Paket Pekerjaan</span>
-              <p className="font-bold text-white text-sm leading-snug">{project.namaProyek || project.nama}</p>
-            </div>
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Nilai Kontrak (Pagu)</span>
-              <p className="font-bold text-emerald-400 text-sm flex items-center gap-1">
-                <DollarSign className="w-4 h-4" /> {formatRupiah(project.nilaiKontrak || project.pagu)}
-              </p>
-            </div>
-
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Nomor Kontrak</span>
-              <p className="font-semibold text-white font-mono">{project.kodeKontrak || project.nomorKontrak}</p>
-            </div>
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Nomor SPMK</span>
-              <p className="font-semibold text-white font-mono">{project.nomorSPMK || '-'}</p>
-            </div>
-
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Sumber Dana & Tahun Anggaran</span>
-              <p className="font-semibold text-white">{project.sumberDana || '-'} (TA. {project.tahunAnggaran || '2026'})</p>
-            </div>
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Bidang / Kategori</span>
-              <p className="font-semibold text-white">{project.kategori || '-'}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Section 3: Waktu Pelaksanaan & Titik GIS */}
-        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
-            <Clock className="w-4 h-4" /> Jadwal Pelaksanaan & Lokasi
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-amber-500" /> Periode Kontrak (SPMK s/d PHO)</span>
-              <p className="font-semibold text-white">{project.tanggalMulai} - {project.tanggalSelesai}</p>
-            </div>
-            <div className="space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Waktu Pelaksanaan</span>
-              <p className="font-bold text-white font-mono">{project.waktuPelaksanaan || '-'}</p>
-            </div>
-            <div className="space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 text-[11px] font-medium">Masa Pemeliharaan</span>
-              <p className="font-bold text-white font-mono">{project.masaPemeliharaan || '-'}</p>
-            </div>
-
-            <div className="md:col-span-2 space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Keterangan Wilayah Lokasi</span>
-              <p className="font-semibold text-white">{project.lokasiWilayah || project.lokasi}</p>
-            </div>
-            <div className="space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5 text-amber-500" /> Latitude (Y)</span>
-              <p className="font-mono font-semibold text-slate-200">{project.latitude || (project.coordinates && project.coordinates.lat) || '-'}</p>
-            </div>
-            <div className="space-y-1 bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-              <span className="text-slate-400 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5 text-amber-500" /> Longitude (X)</span>
-              <p className="font-mono font-semibold text-slate-200">{project.longitude || (project.coordinates && project.coordinates.lng) || '-'}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Section 4: Stakeholders & Tim Lapangan */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 flex flex-col justify-between">
+          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 relative">
+            
+            {isEditMode && (
+              <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+                <Edit3 className="w-4 h-4" />
+              </button>
+            )}
+
+            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
+              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <FileSignature className="w-4 h-4" /> Data Kontrak & Keuangan
+              </h2>
+              <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${
+                project.status === 'Delayed' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
+                'bg-amber-500/10 text-amber-400 border-amber-500/20'
+              }`}>
+                Status: {project.status}
+              </span>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                <span className="text-slate-400 text-[10px] font-medium block mb-1">Nama Paket Pekerjaan</span>
+                <p className="font-bold text-white text-sm leading-snug">{project.namaProyek || project.nama}</p>
+              </div>
+              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                <span className="text-slate-400 text-[10px] font-medium block mb-1">Nilai Kontrak (Pagu)</span>
+                <p className="font-bold text-emerald-400 text-sm flex items-center gap-1">
+                  <DollarSign className="w-4 h-4" /> {formatRupiah(project.nilaiKontrak || project.pagu)}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Nomor Kontrak</span>
+                  <p className="font-semibold text-white font-mono">{project.kodeKontrak || project.nomorKontrak}</p>
+                </div>
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Nomor SPMK</span>
+                  <p className="font-semibold text-white font-mono">{project.nomorSPMK || '-'}</p>
+                </div>
+              </div>
+              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                <span className="text-slate-400 text-[10px] font-medium block mb-1">Sumber Dana & Tahun Anggaran</span>
+                <p className="font-semibold text-white">{project.sumberDana || '-'} (TA. {project.tahunAnggaran || '2026'})</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 relative">
+            
+            {isEditMode && (
+              <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+                <Edit3 className="w-4 h-4" />
+              </button>
+            )}
+
+            <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
+              <Clock className="w-4 h-4" /> Jadwal Pelaksanaan & Lokasi
+            </h2>
+
+            <div className="space-y-3 text-xs">
+              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                <span className="text-slate-400 flex items-center gap-1.5 mb-1"><Calendar className="w-3.5 h-3.5 text-amber-500" /> Periode Kontrak (SPMK s/d PHO)</span>
+                <p className="font-semibold text-white">{project.tanggalMulai} - {project.tanggalSelesai}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Waktu Pelaksanaan</span>
+                  <p className="font-bold text-white font-mono">{project.waktuPelaksanaan || '-'}</p>
+                </div>
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Masa Pemeliharaan</span>
+                  <p className="font-bold text-white font-mono">{project.masaPemeliharaan || '-'}</p>
+                </div>
+              </div>
+              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                <span className="text-slate-400 flex items-center gap-1.5 mb-1"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Keterangan Wilayah Lokasi</span>
+                <p className="font-semibold text-white">{project.lokasiWilayah || project.lokasi}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-slate-400 flex items-center gap-1.5 mb-1"><Compass className="w-3.5 h-3.5 text-amber-500" /> Latitude (Y)</span>
+                  <p className="font-mono font-semibold text-slate-200">{project.latitude || '-'}</p>
+                </div>
+                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+                  <span className="text-slate-400 flex items-center gap-1.5 mb-1"><Compass className="w-3.5 h-3.5 text-amber-500" /> Longitude (X)</span>
+                  <p className="font-mono font-semibold text-slate-200">{project.longitude || '-'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Stakeholders & Tim Lapangan */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 flex flex-col justify-between relative">
+            
+            {isEditMode && (
+              <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+                <Edit3 className="w-4 h-4" />
+              </button>
+            )}
+
             <div className="space-y-4">
-              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
+              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3 pr-8">
                 <UserCheck className="w-4 h-4" /> Para Pihak (Stakeholders)
               </h2>
               <div className="space-y-3 text-xs">
@@ -332,12 +350,20 @@ export default function ProjectData() {
 
           <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 flex flex-col justify-between">
             <div className="space-y-4">
-              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
-                <Users className="w-4 h-4" /> Tim Personel Kunci Lapangan
-              </h2>
+              <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
+                <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                  <Users className="w-4 h-4" /> Tim Personel Kunci Lapangan
+                </h2>
+                {isEditMode && (
+                  <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-500/20 transition-all animate-fade-in">
+                    <Plus className="w-3.5 h-3.5" /> Tambah
+                  </button>
+                )}
+              </div>
+              
               <div className="space-y-3 text-xs">
                 {(project.timLapangan || []).map((person, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl">
+                  <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl group hover:border-slate-600 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-slate-800 rounded-lg border border-slate-700">
                         <HardHat className="w-4 h-4 text-slate-400" />
@@ -347,9 +373,17 @@ export default function ProjectData() {
                         <p className="text-[11px] text-slate-400">{person.peran}</p>
                       </div>
                     </div>
-                    <span className="p-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px]">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                    </span>
+                    {/* Toggle Aksi Personil (Hanya muncul jika isEditMode true) */}
+                    {isEditMode ? (
+                      <div className="flex gap-2 opacity-60 hover:opacity-100 transition-opacity animate-fade-in">
+                        <Edit3 className="w-3.5 h-3.5 text-blue-400 cursor-pointer" />
+                        <Trash2 className="w-3.5 h-3.5 text-rose-400 cursor-pointer" />
+                      </div>
+                    ) : (
+                      <span className="p-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px]">
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                      </span>
+                    )}
                   </div>
                 ))}
                 {(!project.timLapangan || project.timLapangan.length === 0) && (
@@ -360,15 +394,23 @@ export default function ProjectData() {
           </div>
         </div>
 
-        {/* Section 5: Ringkasan Progress & Dokumen Digital */}
+        {/* Section 4: Ringkasan Progress & Dokumen Digital */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4">
-            <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
-              <Activity className="w-4 h-4" /> Riwayat Deviasi Mingguan
-            </h2>
+            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
+              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <Activity className="w-4 h-4" /> Riwayat Deviasi Mingguan
+              </h2>
+              {isEditMode && (
+                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-500/20 transition-all animate-fade-in">
+                  <Plus className="w-3.5 h-3.5" /> Tambah
+                </button>
+              )}
+            </div>
+            
             <div className="space-y-2 text-xs">
               {(project.riwayatProgress || []).map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl">
+                <div key={index} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl group hover:border-slate-600 transition-colors">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                     <div>
@@ -376,11 +418,21 @@ export default function ProjectData() {
                       <p className="text-[10px] text-slate-400">Realisasi: {item.progress}</p>
                     </div>
                   </div>
-                  <span className={`text-[10px] px-2 py-0.5 border rounded-md ${
-                    item.status.includes('Terlambat') || item.status.includes('(-)') ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-slate-800 text-slate-300 border-slate-700'
-                  }`}>
-                    {item.status}
-                  </span>
+                  
+                  <div className="flex items-center gap-3">
+                    <span className={`text-[10px] px-2 py-0.5 border rounded-md ${
+                      item.status.includes('Terlambat') || item.status.includes('(-)') ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-slate-800 text-slate-300 border-slate-700'
+                    }`}>
+                      {item.status}
+                    </span>
+                    {/* Toggle Aksi Riwayat */}
+                    {isEditMode && (
+                      <div className="flex gap-1.5 opacity-60 hover:opacity-100 transition-opacity animate-fade-in">
+                        <Edit3 className="w-3.5 h-3.5 text-blue-400 cursor-pointer" />
+                        <Trash2 className="w-3.5 h-3.5 text-rose-400 cursor-pointer" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
               {(!project.riwayatProgress || project.riwayatProgress.length === 0) && (
@@ -390,19 +442,35 @@ export default function ProjectData() {
           </div>
 
           <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4">
-            <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
-              <FileText className="w-4 h-4" /> Dokumen Administrasi Digital
-            </h2>
+            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
+              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <FileText className="w-4 h-4" /> Dokumen Administrasi Digital
+              </h2>
+              {isEditMode && (
+                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-500/20 transition-all animate-fade-in">
+                  <UploadCloud className="w-3.5 h-3.5" /> Upload File
+                </button>
+              )}
+            </div>
+            
             <div className="space-y-2 text-xs">
               {(project.dokumen || []).map((doc, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl hover:border-slate-600 transition-all">
+                <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl group hover:border-slate-600 transition-colors">
                   <div className="truncate pr-4">
                     <p className="font-medium text-white truncate">{doc.nama}</p>
                     <p className="text-[10px] text-slate-400">{doc.ukur}</p>
                   </div>
-                  <button className="p-2 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg border border-slate-700 transition-all shrink-0">
-                    <Download className="w-4 h-4" />
-                  </button>
+                  
+                  {/* Toggle Aksi Dokumen */}
+                  {isEditMode ? (
+                    <button className="p-2 text-slate-500 hover:text-rose-400 rounded-lg transition-all cursor-pointer bg-slate-800/50 hover:bg-rose-500/10 animate-fade-in" title="Hapus File">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  ) : (
+                    <button className="p-2 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg border border-slate-700 transition-all shrink-0">
+                      <Download className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
               ))}
               {(!project.dokumen || project.dokumen.length === 0) && (
@@ -412,9 +480,16 @@ export default function ProjectData() {
           </div>
         </div>
 
-        {/* Section 6: Deskripsi Lingkup Pekerjaan */}
-        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-3">
-          <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
+        {/* Section 5: Deskripsi Lingkup Pekerjaan */}
+        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-3 relative">
+          
+          {isEditMode && (
+            <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+              <Edit3 className="w-4 h-4" />
+            </button>
+          )}
+
+          <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3 pr-8">
             <FileText className="w-4 h-4" /> Deskripsi & Lingkup Pekerjaan
           </h2>
           <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
