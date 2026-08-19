@@ -241,33 +241,39 @@ export default function Sidebar() {
           </nav>
         </div>
 
- {/* --- FOOTER: TEMA & LOGOUT --- */}
-        <div className="border-t border-slate-200 dark:border-slate-700/60 pt-4 flex flex-col gap-3">
+{/* --- FOOTER: TEMA & LOGOUT --- */}
+        <div className="border-t border-slate-200 dark:border-slate-700/60 pt-4 flex flex-col gap-2">
           
           {/* Toggle Switch Dark/Light Mode */}
-          <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} px-3`}>
-            {!isCollapsed && (
+          {isCollapsed ? (
+            // Tampilan saat Sidebar TERTUTUP (Hanya Ikon)
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              title={isDarkMode ? "Ganti ke Mode Terang" : "Ganti ke Mode Gelap"}
+              className="flex items-center justify-center py-2.5 rounded-xl transition-all cursor-pointer w-full text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white"
+            >
+              {isDarkMode ? <Sun className="w-5 h-5 text-amber-500 shrink-0" /> : <Moon className="w-5 h-5 text-indigo-400 shrink-0" />}
+            </button>
+          ) : (
+            // Tampilan saat Sidebar TERBUKA (Teks + Saklar)
+            <div className="flex items-center justify-between px-3 py-1.5">
               <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
                 {isDarkMode ? 'Mode Gelap' : 'Mode Terang'}
               </span>
-            )}
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                isDarkMode ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out ${
-                  isDarkMode ? 'translate-x-6' : 'translate-x-1'
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors focus:outline-none cursor-pointer ${
+                  isDarkMode ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600'
                 }`}
-              />
-              <span className="absolute inset-0 flex items-center justify-between px-1.5 pointer-events-none">
-                <Moon className="w-3 h-3 text-slate-800 opacity-0" />
-                <Sun className="w-3 h-3 text-amber-900 opacity-0" />
-              </span>
-            </button>
-          </div>
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-300 ease-in-out ${
+                    isDarkMode ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          )}
 
           {/* Keluar Akun */}
           <Link

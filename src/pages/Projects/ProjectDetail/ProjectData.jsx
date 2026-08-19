@@ -92,7 +92,6 @@ export default function ProjectData() {
   const location = useLocation();
   const { id } = useParams();
 
-  // STATE: Toggle untuk mengaktifkan Edit Mode
   const [isEditMode, setIsEditMode] = useState(false);
 
   const selectedId = id || (location.state && location.state.id) || 1;
@@ -108,114 +107,125 @@ export default function ProjectData() {
   return (
     <div className="w-full space-y-5">
       
-      {/* Top Bar Navigation (Full Width & Sebaris) */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 shrink-0 mb-2">
+      {/* --- TOP BAR NAVIGATION --- */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 shrink-0 mb-2">
         
         {/* Kiri: Tombol Back & Judul */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-start lg:items-center gap-3 shrink-0">
           <Link
             to="/projects"
-            className="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700/80 text-slate-300 hover:text-white rounded-xl transition-all cursor-pointer"
+            className="p-2.5 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 rounded-xl transition-all shadow-sm mt-0.5 lg:mt-0"
             title="Kembali ke Daftar Proyek"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div>
-            <h1 className="text-lg font-bold text-white leading-tight flex items-center gap-1.5">
-              <Building2 className="w-4 h-4 text-amber-500" /> Executive Summary Proyek
+          <div className="flex-1 min-w-0">
+            <h1 className="text-base lg:text-lg font-bold text-slate-800 dark:text-white leading-snug flex items-start lg:items-center gap-1.5 flex-wrap">
+              <Building2 className="w-4 h-4 text-amber-500 shrink-0 mt-1 lg:mt-0" /> 
+              <span>Executive Summary Proyek</span>
             </h1>
-            <p className="text-[10px] text-slate-400">{project.namaProyek} • SPK{project.kodeKontrak}</p>
+            <p className="text-[10px] lg:text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 lg:line-clamp-1 leading-relaxed">
+              {project.namaProyek} • SPK{project.kodeKontrak}
+            </p>
           </div>
         </div>
 
         {/* Kanan: Action Buttons & Navigasi Modul */}
-        <div className="flex flex-col sm:flex-row items-center gap-2 w-full xl:w-auto overflow-x-auto pb-1 sm:pb-0">
+        {/* Menggunakan flex-col di Mobile agar bersusun, dan lg:flex-row agar sejajar di Desktop */}
+        <div className="flex flex-col lg:flex-row items-center gap-2 w-full lg:w-auto mt-2 lg:mt-0">
           
-          {/* Action Buttons (Dengan Fitur Toggle Edit Mode) */}
-          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 shrink-0">
+          {/* Card 1: Action Buttons */}
+          <div className="flex items-center w-full lg:w-auto justify-between lg:justify-start gap-1 bg-white dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
             <button 
               onClick={() => setIsEditMode(!isEditMode)}
-              className={`px-2.5 py-1.5 ${isEditMode ? 'bg-blue-500/20 text-blue-400' : 'bg-transparent hover:bg-blue-500/10 text-slate-300 hover:text-blue-400'} text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap`}
+              title={isEditMode ? 'Selesai Edit' : 'Edit Mode'}
+              className={`flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 ${isEditMode ? 'bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-transparent hover:bg-blue-50 dark:hover:bg-blue-500/10 text-slate-600 dark:text-slate-300'} text-[11px] font-medium rounded-lg transition-all whitespace-nowrap`}
             >
-              <Edit3 className="w-3.5 h-3.5" /> {isEditMode ? 'Selesai Edit' : 'Edit Mode'}
+              <Edit3 className="w-4 h-4 lg:w-3.5 lg:h-3.5" /> <span className="hidden lg:inline">{isEditMode ? 'Selesai Edit' : 'Edit Mode'}</span>
             </button>
-            <button className="px-2.5 py-1.5 bg-transparent hover:bg-rose-500/10 text-slate-300 hover:text-rose-400 text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap">
-              <Trash2 className="w-3.5 h-3.5" /> Hapus
+            <button title="Hapus Proyek" className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 bg-transparent hover:bg-rose-50 dark:hover:bg-rose-500/10 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-400 text-[11px] font-medium rounded-lg transition-all whitespace-nowrap">
+              <Trash2 className="w-4 h-4 lg:w-3.5 lg:h-3.5" /> <span className="hidden lg:inline">Hapus</span>
             </button>
-            <div className="w-px h-4 bg-slate-700/80 mx-0.5"></div>
-            <button className="px-2.5 py-1.5 bg-transparent hover:bg-emerald-500/10 text-slate-300 hover:text-emerald-400 text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap">
-              <UploadCloud className="w-3.5 h-3.5" /> Import Excel
+            
+            {/* Garis pemisah disembunyikan di Mobile agar flex-1 bisa membagi ruang rata */}
+            <div className="hidden lg:block w-px h-5 bg-slate-200 dark:bg-slate-700/80 mx-0.5 shrink-0"></div>
+            
+            <button title="Import Excel" className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 bg-transparent hover:bg-emerald-50 dark:hover:bg-emerald-500/10 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 text-[11px] font-medium rounded-lg transition-all whitespace-nowrap">
+              <UploadCloud className="w-4 h-4 lg:w-3.5 lg:h-3.5" /> <span className="hidden lg:inline">Import</span>
             </button>
-            <button className="px-2.5 py-1.5 bg-transparent hover:bg-amber-500/10 text-slate-300 hover:text-amber-400 text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap">
-              <Download className="w-3.5 h-3.5" /> Export PDF
+            <button title="Export PDF" className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 bg-transparent hover:bg-amber-50 dark:hover:bg-amber-500/10 text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 text-[11px] font-medium rounded-lg transition-all whitespace-nowrap">
+              <Download className="w-4 h-4 lg:w-3.5 lg:h-3.5" /> <span className="hidden lg:inline">Export</span>
             </button>
           </div>
 
-          {/* Navigasi Sub-Modul */}
-          <div className="flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60 shrink-0">
+          {/* Card 2: Navigasi Sub-Modul */}
+          <div className="flex items-center w-full lg:w-auto justify-between lg:justify-start gap-1 bg-white dark:bg-slate-800/80 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
             <button
               type="button"
-              className="px-3 py-1.5 bg-amber-500 text-slate-950 text-[11px] font-bold rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-default whitespace-nowrap"
+              title="Data Utama"
+              className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 bg-amber-500 text-white dark:text-slate-950 text-[11px] font-bold rounded-lg shadow-sm transition-all cursor-default whitespace-nowrap"
             >
-              <Info className="w-3.5 h-3.5" /> Data Utama
+              <Info className="w-4 h-4 lg:w-3.5 lg:h-3.5" /> <span className="hidden lg:inline">Data Utama</span>
             </button>
             <button
               type="button"
+              title="Rencana Anggaran Biaya (RAB)"
               onClick={() => navigate(`/projects/${selectedId}/rab`, { state: project })}
-              className="px-3 py-1.5 bg-transparent hover:bg-slate-700/60 text-slate-300 hover:text-white text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap"
+              className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-[11px] font-medium rounded-lg transition-all whitespace-nowrap"
             >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-amber-400" /> RAB
+              <FileSpreadsheet className="w-4 h-4 lg:w-3.5 lg:h-3.5 text-amber-500" /> <span className="hidden lg:inline">RAB</span>
             </button>
             <button
               type="button"
+              title="Kurva S & Progress"
               onClick={() => navigate(`/projects/${selectedId}/kurva-s`, { state: project })}
-              className="px-3 py-1.5 bg-transparent hover:bg-slate-700/60 text-slate-300 hover:text-white text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap"
+              className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-[11px] font-medium rounded-lg transition-all whitespace-nowrap"
             >
-              <TrendingUp className="w-3.5 h-3.5 text-amber-400" /> Kurva S
+              <TrendingUp className="w-4 h-4 lg:w-3.5 lg:h-3.5 text-amber-500" /> <span className="hidden lg:inline">Kurva S</span>
             </button>
             <button
               type="button"
+              title="Peta GIS"
               onClick={() => navigate(`/projects/${selectedId}/peta-gis`, { state: project })}
-              className="px-3 py-1.5 bg-transparent hover:bg-slate-700/60 text-slate-300 hover:text-white text-[11px] font-medium rounded-lg flex items-center gap-1.5 transition-all whitespace-nowrap"
+              className="flex-1 lg:flex-none flex justify-center items-center gap-1.5 py-2 lg:py-1.5 lg:px-3 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-[11px] font-medium rounded-lg transition-all whitespace-nowrap"
             >
-              <Compass className="w-3.5 h-3.5 text-amber-400" /> Peta GIS
+              <Compass className="w-4 h-4 lg:w-3.5 lg:h-3.5 text-amber-500" /> <span className="hidden lg:inline">Peta GIS</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Main Content Details */}
+      {/* --- MAIN CONTENT DETAILS --- */}
       <div className="space-y-4">
         
         {/* Section 1: Progress Snapshot */}
-        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl flex flex-col md:flex-row gap-6 items-center justify-between relative">
+        <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row gap-4 md:gap-6 items-center justify-between relative shadow-sm">
           
-          {/* Tombol Edit Header Info (muncul di Edit Mode) */}
           {isEditMode && (
-            <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+            <button className="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-600 transition-all z-10">
               <Edit3 className="w-4 h-4" />
             </button>
           )}
 
-          <div className="w-full md:w-1/3">
-            <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-1">
+          <div className="w-full md:w-1/3 text-center md:text-left">
+            <h2 className="text-sm font-bold text-slate-800 dark:text-white flex items-center justify-center md:justify-start gap-2 mb-1">
               <Activity className="w-4 h-4 text-amber-500" /> Indikator Progress Fisik
             </h2>
-            <p className="text-[11px] text-slate-400">Perbandingan target rencana S-Curve dengan realisasi lapangan.</p>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 md:mt-0 px-2 md:px-0">Perbandingan target rencana S-Curve dengan realisasi lapangan.</p>
           </div>
           
-          <div className="w-full md:w-2/3 flex items-center gap-4">
-            <div className="flex-1 bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-center">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider">Plan (Rencana)</span>
-              <p className="text-lg font-mono font-bold text-sky-400">{project.progressPlan || 0}%</p>
+          <div className="w-full md:w-2/3 grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 md:p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 text-center">
+              <span className="text-[9px] md:text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Plan</span>
+              <p className="text-sm md:text-lg font-mono font-bold text-sky-600 dark:text-sky-400">{project.progressPlan || 0}%</p>
             </div>
-            <div className="flex-1 bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-center">
-              <span className="text-[10px] text-slate-400 uppercase tracking-wider">Actual (Realisasi)</span>
-              <p className="text-lg font-mono font-bold text-emerald-400">{project.progressReal || 0}%</p>
+            <div className="bg-slate-50 dark:bg-slate-900/60 p-2.5 md:p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 text-center">
+              <span className="text-[9px] md:text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">Actual</span>
+              <p className="text-sm md:text-lg font-mono font-bold text-emerald-600 dark:text-emerald-400">{project.progressReal || 0}%</p>
             </div>
-            <div className={`flex-1 p-3 rounded-xl border text-center ${isDelayed ? 'bg-rose-500/10 border-rose-500/30' : 'bg-amber-500/10 border-amber-500/30'}`}>
-              <span className={`text-[10px] uppercase tracking-wider ${isDelayed ? 'text-rose-400' : 'text-amber-500'}`}>Deviasi</span>
-              <p className={`text-lg font-mono font-bold ${isDelayed ? 'text-rose-400' : 'text-amber-500'}`}>
+            <div className={`p-2.5 md:p-3 rounded-xl border text-center flex flex-col justify-center ${isDelayed ? 'bg-rose-50 dark:bg-rose-500/10 border-rose-200 dark:border-rose-500/30' : 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/30'}`}>
+              <span className={`text-[9px] md:text-[10px] uppercase tracking-wider block mb-1 ${isDelayed ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-500'}`}>Deviasi</span>
+              <p className={`text-sm md:text-lg font-mono font-bold ${isDelayed ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-500'}`}>
                 {project.deviasi || '0.0'}%
               </p>
             </div>
@@ -223,94 +233,92 @@ export default function ProjectData() {
         </div>
 
         {/* Section 2: Data Kontrak & Administrasi */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 relative">
-            
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl space-y-4 relative shadow-sm">
             {isEditMode && (
-              <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+              <button className="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-600 transition-all z-10">
                 <Edit3 className="w-4 h-4" />
               </button>
             )}
 
-            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
-              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
-                <FileSignature className="w-4 h-4" /> Data Kontrak & Keuangan
+            <div className="flex flex-wrap items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 gap-2">
+              <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <FileSignature className="w-4 h-4" /> Kontrak & Keuangan
               </h2>
-              <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${
-                project.status === 'Delayed' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' :
-                'bg-amber-500/10 text-amber-400 border-amber-500/20'
+              <span className={`px-2.5 py-1 text-[10px] md:text-[11px] font-semibold rounded-lg border inline-block ${
+                project.status === 'Delayed' ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-500/20' :
+                'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
               }`}>
                 Status: {project.status}
               </span>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                <span className="text-slate-400 text-[10px] font-medium block mb-1">Nama Paket Pekerjaan</span>
-                <p className="font-bold text-white text-sm leading-snug">{project.namaProyek || project.nama}</p>
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium block mb-1">Nama Paket Pekerjaan</span>
+                <p className="font-bold text-slate-800 dark:text-white text-sm leading-snug">{project.namaProyek || project.nama}</p>
               </div>
-              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                <span className="text-slate-400 text-[10px] font-medium block mb-1">Nilai Kontrak (Pagu)</span>
-                <p className="font-bold text-emerald-400 text-sm flex items-center gap-1">
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium block mb-1">Nilai Kontrak (Pagu)</span>
+                <p className="font-bold text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1">
                   <DollarSign className="w-4 h-4" /> {formatRupiah(project.nilaiKontrak || project.pagu)}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Nomor Kontrak</span>
-                  <p className="font-semibold text-white font-mono">{project.kodeKontrak || project.nomorKontrak}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium block mb-1">Nomor Kontrak</span>
+                  <p className="font-semibold text-slate-800 dark:text-white font-mono break-all">{project.kodeKontrak || project.nomorKontrak}</p>
                 </div>
-                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Nomor SPMK</span>
-                  <p className="font-semibold text-white font-mono">{project.nomorSPMK || '-'}</p>
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium block mb-1">Nomor SPMK</span>
+                  <p className="font-semibold text-slate-800 dark:text-white font-mono break-all">{project.nomorSPMK || '-'}</p>
                 </div>
               </div>
-              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                <span className="text-slate-400 text-[10px] font-medium block mb-1">Sumber Dana & Tahun Anggaran</span>
-                <p className="font-semibold text-white">{project.sumberDana || '-'} (TA. {project.tahunAnggaran || '2026'})</p>
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium block mb-1">Sumber Dana & Tahun Anggaran</span>
+                <p className="font-semibold text-slate-800 dark:text-white">{project.sumberDana || '-'} (TA. {project.tahunAnggaran || '2026'})</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 relative">
-            
+          <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl space-y-4 relative shadow-sm">
             {isEditMode && (
-              <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+              <button className="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-600 transition-all z-10">
                 <Edit3 className="w-4 h-4" />
               </button>
             )}
 
-            <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3">
-              <Clock className="w-4 h-4" /> Jadwal Pelaksanaan & Lokasi
+            <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700/60 pb-3 pr-8">
+              <Clock className="w-4 h-4" /> Jadwal & Lokasi
             </h2>
 
             <div className="space-y-3 text-xs">
-              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                <span className="text-slate-400 flex items-center gap-1.5 mb-1"><Calendar className="w-3.5 h-3.5 text-amber-500" /> Periode Kontrak (SPMK s/d PHO)</span>
-                <p className="font-semibold text-white">{project.tanggalMulai} - {project.tanggalSelesai}</p>
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mb-1"><Calendar className="w-3.5 h-3.5 text-amber-500" /> Periode Kontrak (SPMK s/d PHO)</span>
+                <p className="font-semibold text-slate-800 dark:text-white">{project.tanggalMulai} - {project.tanggalSelesai}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Waktu Pelaksanaan</span>
-                  <p className="font-bold text-white font-mono">{project.waktuPelaksanaan || '-'}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium block mb-1">Waktu Pelaksanaan</span>
+                  <p className="font-bold text-slate-800 dark:text-white font-mono">{project.waktuPelaksanaan || '-'}</p>
                 </div>
-                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                  <span className="text-slate-400 text-[10px] font-medium block mb-1">Masa Pemeliharaan</span>
-                  <p className="font-bold text-white font-mono">{project.masaPemeliharaan || '-'}</p>
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                  <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium block mb-1">Masa Pemeliharaan</span>
+                  <p className="font-bold text-slate-800 dark:text-white font-mono">{project.masaPemeliharaan || '-'}</p>
                 </div>
               </div>
-              <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                <span className="text-slate-400 flex items-center gap-1.5 mb-1"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Keterangan Wilayah Lokasi</span>
-                <p className="font-semibold text-white">{project.lokasiWilayah || project.lokasi}</p>
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mb-1"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Keterangan Wilayah Lokasi</span>
+                <p className="font-semibold text-slate-800 dark:text-white">{project.lokasiWilayah || project.lokasi}</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                  <span className="text-slate-400 flex items-center gap-1.5 mb-1"><Compass className="w-3.5 h-3.5 text-amber-500" /> Latitude (Y)</span>
-                  <p className="font-mono font-semibold text-slate-200">{project.latitude || '-'}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5 text-amber-500" /> Latitude (Y)</span>
+                  <p className="font-mono font-semibold text-slate-700 dark:text-slate-200">{project.latitude || '-'}</p>
                 </div>
-                <div className="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
-                  <span className="text-slate-400 flex items-center gap-1.5 mb-1"><Compass className="w-3.5 h-3.5 text-amber-500" /> Longitude (X)</span>
-                  <p className="font-mono font-semibold text-slate-200">{project.longitude || '-'}</p>
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 md:p-4 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                  <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5"><Compass className="w-3.5 h-3.5 text-amber-500" /> Longitude (X)</span>
+                  <p className="font-mono font-semibold text-slate-700 dark:text-slate-200">{project.longitude || '-'}</p>
                 </div>
               </div>
             </div>
@@ -318,91 +326,86 @@ export default function ProjectData() {
         </div>
 
         {/* Section 3: Stakeholders & Tim Lapangan */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 flex flex-col justify-between relative">
-            
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          
+          <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl space-y-4 relative shadow-sm">
             {isEditMode && (
-              <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+              <button className="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-600 transition-all z-10">
                 <Edit3 className="w-4 h-4" />
               </button>
             )}
 
-            <div className="space-y-4">
-              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3 pr-8">
-                <UserCheck className="w-4 h-4" /> Para Pihak (Stakeholders)
-              </h2>
-              <div className="space-y-3 text-xs">
-                <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/50 space-y-1">
-                  <span className="text-slate-400 text-[11px]">PPK (Pejabat Pembuat Komitmen) / Owner</span>
-                  <p className="font-semibold text-white">{project.ppk || '-'}</p>
-                </div>
-                <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/50 space-y-1">
-                  <span className="text-slate-400 text-[11px]">Kontraktor Pelaksana (Penyedia Jasa)</span>
-                  <p className="font-semibold text-white">{project.kontraktor}</p>
-                </div>
-                <div className="bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/50 space-y-1">
-                  <span className="text-slate-400 text-[11px]">Konsultan Pengawas / Manajemen Konstruksi</span>
-                  <p className="font-semibold text-white">{project.konsultan}</p>
-                </div>
+            <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700/60 pb-3 pr-8">
+              <UserCheck className="w-4 h-4" /> Para Pihak (Stakeholders)
+            </h2>
+            <div className="space-y-3 text-xs">
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/50 space-y-1">
+                <span className="text-slate-500 dark:text-slate-400 text-[11px]">PPK (Pejabat Pembuat Komitmen) / Owner</span>
+                <p className="font-semibold text-slate-800 dark:text-white">{project.ppk || '-'}</p>
+              </div>
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/50 space-y-1">
+                <span className="text-slate-500 dark:text-slate-400 text-[11px]">Kontraktor Pelaksana (Penyedia Jasa)</span>
+                <p className="font-semibold text-slate-800 dark:text-white">{project.kontraktor}</p>
+              </div>
+              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/50 space-y-1">
+                <span className="text-slate-500 dark:text-slate-400 text-[11px]">Konsultan Pengawas / Manajemen Konstruksi</span>
+                <p className="font-semibold text-slate-800 dark:text-white">{project.konsultan}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4 flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
-                <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
-                  <Users className="w-4 h-4" /> Tim Personel Kunci Lapangan
-                </h2>
-                {isEditMode && (
-                  <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-500/20 transition-all animate-fade-in">
-                    <Plus className="w-3.5 h-3.5" /> Tambah
-                  </button>
-                )}
-              </div>
-              
-              <div className="space-y-3 text-xs">
-                {(project.timLapangan || []).map((person, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl group hover:border-slate-600 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-slate-800 rounded-lg border border-slate-700">
-                        <HardHat className="w-4 h-4 text-slate-400" />
-                      </div>
-                      <div>
-                        <p className="font-bold text-white">{person.nama}</p>
-                        <p className="text-[11px] text-slate-400">{person.peran}</p>
-                      </div>
+          <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl space-y-4 shadow-sm flex flex-col">
+            <div className="flex flex-wrap items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 gap-2">
+              <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <Users className="w-4 h-4" /> Personel Lapangan
+              </h2>
+              {isEditMode && (
+                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-200 dark:border-emerald-500/20 transition-all">
+                  <Plus className="w-3.5 h-3.5" /> Tambah
+                </button>
+              )}
+            </div>
+            
+            <div className="space-y-3 text-xs flex-1">
+              {(project.timLapangan || []).map((person, idx) => (
+                <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/50 rounded-xl group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                      <HardHat className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                     </div>
-                    {/* Toggle Aksi Personil (Hanya muncul jika isEditMode true) */}
-                    {isEditMode ? (
-                      <div className="flex gap-2 opacity-60 hover:opacity-100 transition-opacity animate-fade-in">
-                        <Edit3 className="w-3.5 h-3.5 text-blue-400 cursor-pointer" />
-                        <Trash2 className="w-3.5 h-3.5 text-rose-400 cursor-pointer" />
-                      </div>
-                    ) : (
-                      <span className="p-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-[10px]">
-                        <ShieldCheck className="w-3.5 h-3.5" />
-                      </span>
-                    )}
+                    <div>
+                      <p className="font-bold text-slate-800 dark:text-white">{person.nama}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{person.peran}</p>
+                    </div>
                   </div>
-                ))}
-                {(!project.timLapangan || project.timLapangan.length === 0) && (
-                   <p className="text-slate-500 text-center py-4">Data tim lapangan belum tersedia.</p>
-                )}
-              </div>
+                  {isEditMode ? (
+                    <div className="flex gap-2">
+                      <Edit3 className="w-4 h-4 text-blue-500 dark:text-blue-400 cursor-pointer" />
+                      <Trash2 className="w-4 h-4 text-rose-500 dark:text-rose-400 cursor-pointer" />
+                    </div>
+                  ) : (
+                    <span className="p-1.5 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 rounded-lg">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                    </span>
+                  )}
+                </div>
+              ))}
+              {(!project.timLapangan || project.timLapangan.length === 0) && (
+                 <p className="text-slate-500 text-center py-4">Data tim belum tersedia.</p>
+              )}
             </div>
           </div>
         </div>
 
         {/* Section 4: Ringkasan Progress & Dokumen Digital */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
-              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
-                <Activity className="w-4 h-4" /> Riwayat Deviasi Mingguan
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl space-y-4 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 gap-2">
+              <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <Activity className="w-4 h-4" /> Riwayat Deviasi
               </h2>
               {isEditMode && (
-                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-500/20 transition-all animate-fade-in">
+                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-200 dark:border-emerald-500/20 transition-all">
                   <Plus className="w-3.5 h-3.5" /> Tambah
                 </button>
               )}
@@ -410,44 +413,40 @@ export default function ProjectData() {
             
             <div className="space-y-2 text-xs">
               {(project.riwayatProgress || []).map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl group hover:border-slate-600 transition-colors">
+                <div key={index} className="flex flex-wrap items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/50 rounded-xl gap-2">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
                     <div>
-                      <p className="font-semibold text-white">{item.minggu}</p>
-                      <p className="text-[10px] text-slate-400">Realisasi: {item.progress}</p>
+                      <p className="font-semibold text-slate-800 dark:text-white">{item.minggu}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Realisasi: {item.progress}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center gap-3">
-                    <span className={`text-[10px] px-2 py-0.5 border rounded-md ${
-                      item.status.includes('Terlambat') || item.status.includes('(-)') ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-slate-800 text-slate-300 border-slate-700'
+                    <span className={`text-[9px] md:text-[10px] px-2 py-1 border rounded-md whitespace-nowrap ${
+                      item.status.includes('Terlambat') || item.status.includes('(-)') ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                     }`}>
                       {item.status}
                     </span>
-                    {/* Toggle Aksi Riwayat */}
                     {isEditMode && (
-                      <div className="flex gap-1.5 opacity-60 hover:opacity-100 transition-opacity animate-fade-in">
-                        <Edit3 className="w-3.5 h-3.5 text-blue-400 cursor-pointer" />
-                        <Trash2 className="w-3.5 h-3.5 text-rose-400 cursor-pointer" />
+                      <div className="flex gap-2">
+                        <Edit3 className="w-4 h-4 text-blue-500 dark:text-blue-400 cursor-pointer" />
+                        <Trash2 className="w-4 h-4 text-rose-500 dark:text-rose-400 cursor-pointer" />
                       </div>
                     )}
                   </div>
                 </div>
               ))}
-              {(!project.riwayatProgress || project.riwayatProgress.length === 0) && (
-                 <p className="text-slate-500 text-center py-4">Riwayat deviasi belum tersedia.</p>
-              )}
             </div>
           </div>
 
-          <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-700/60 pb-3">
-              <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2">
-                <FileText className="w-4 h-4" /> Dokumen Administrasi Digital
+          <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl space-y-4 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between border-b border-slate-200 dark:border-slate-700/60 pb-3 gap-2">
+              <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider flex items-center gap-2">
+                <FileText className="w-4 h-4" /> Dokumen Administrasi
               </h2>
               {isEditMode && (
-                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-500/20 transition-all animate-fade-in">
+                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-medium rounded-lg border border-emerald-200 dark:border-emerald-500/20 transition-all">
                   <UploadCloud className="w-3.5 h-3.5" /> Upload File
                 </button>
               )}
@@ -455,47 +454,42 @@ export default function ProjectData() {
             
             <div className="space-y-2 text-xs">
               {(project.dokumen || []).map((doc, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/60 border border-slate-700/50 rounded-xl group hover:border-slate-600 transition-colors">
-                  <div className="truncate pr-4">
-                    <p className="font-medium text-white truncate">{doc.nama}</p>
-                    <p className="text-[10px] text-slate-400">{doc.ukur}</p>
+                <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/50 rounded-xl gap-2">
+                  <div className="min-w-0 flex-1 pr-2">
+                    <p className="font-medium text-slate-800 dark:text-white truncate">{doc.nama}</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{doc.ukur}</p>
                   </div>
                   
-                  {/* Toggle Aksi Dokumen */}
                   {isEditMode ? (
-                    <button className="p-2 text-slate-500 hover:text-rose-400 rounded-lg transition-all cursor-pointer bg-slate-800/50 hover:bg-rose-500/10 animate-fade-in" title="Hapus File">
+                    <button className="p-2 text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 rounded-lg bg-slate-100 dark:bg-slate-800/50 shrink-0">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   ) : (
-                    <button className="p-2 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-lg border border-slate-700 transition-all shrink-0">
+                    <button className="p-2 bg-white dark:bg-slate-800 text-amber-500 hover:text-amber-600 dark:hover:text-amber-400 rounded-lg border border-slate-200 dark:border-slate-700 shrink-0 shadow-sm">
                       <Download className="w-4 h-4" />
                     </button>
                   )}
                 </div>
               ))}
-              {(!project.dokumen || project.dokumen.length === 0) && (
-                 <p className="text-slate-500 text-center py-4">Dokumen belum tersedia.</p>
-              )}
             </div>
           </div>
         </div>
 
-        {/* Section 5: Deskripsi Lingkup Pekerjaan */}
-        <div className="bg-slate-800/60 border border-slate-700/60 p-5 rounded-2xl space-y-3 relative">
-          
+        {/* Section 5: Deskripsi */}
+        <div className="bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 p-4 md:p-5 rounded-2xl space-y-3 relative shadow-sm">
           {isEditMode && (
-            <button className="absolute top-4 right-4 p-1.5 bg-slate-700 hover:bg-blue-500/20 text-slate-300 hover:text-blue-400 rounded-lg border border-slate-600 transition-all animate-fade-in z-10">
+            <button className="absolute top-3 right-3 md:top-4 md:right-4 p-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-blue-50 dark:hover:bg-blue-500/20 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg border border-slate-200 dark:border-slate-600 transition-all z-10">
               <Edit3 className="w-4 h-4" />
             </button>
           )}
-
-          <h2 className="text-sm font-bold text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-700/60 pb-3 pr-8">
+          <h2 className="text-sm font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider flex items-center gap-2 border-b border-slate-200 dark:border-slate-700/60 pb-3 pr-8">
             <FileText className="w-4 h-4" /> Deskripsi & Lingkup Pekerjaan
           </h2>
-          <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-4 rounded-xl border border-slate-700/50">
+          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/50">
             {project.deskripsi || '-'}
           </p>
         </div>
+
       </div>
     </div>
   );
